@@ -1,0 +1,86 @@
+<html>
+<head>
+	<title>A simple photo booth</title>
+
+	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<link rel="stylesheet" href="bootstrap.min.css" />
+	<style>
+	body
+	{padding:40px} .controls{margin-top:20px}.box{float:left;margin:10px;} video{background:#f3f3f3;border-radius:20px;} canvas{background:#ffffff;}
+	</style>
+</head>
+
+
+<body>
+
+	<div class="box">
+	<video id="vid" width="280" height="210" autoplay></video>
+	<div class="controls">
+		<button class="btn btn-primary" data-function="start" id="capturebtn">Start Capture</button>
+		<button class="btn" data-function="take_photo" id="takephoto">Take Snapshot</button>
+	</div>
+	</div>
+	<canvas id="booth" width="480" height="480" class="box img-circle"></canvas>
+	
+	
+	
+	<script>
+	
+		var app = app || {};
+		
+		(function(){
+		
+			
+			navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
+			var is_capturing = false;
+			var start_capture = function(videoEl, canvasEl)
+			{
+				var onstart = function(stream)
+				{
+					var uri = window.URL.createObjectURL(stream);
+					
+					videoEl.src = uri;
+				}
+				var onerror = function(err)
+				{
+					console.log(err);
+				}
+				navigator.getUserMedia({video:true,audio:false}, onstart, onerror);
+			};
+			
+			var takePhoto = function(videoEl, canvasEl)
+			{
+				var ctx = canvasEl.getContext('2d');
+				ctx.drawImage(videoEl, 0,0);
+			}
+			
+			var args = [document.querySelector('#vid'), document.querySelector('#booth')];
+			$('.controls button').click(function(e)
+			{
+				switch($(this).attr('data-function'))
+				{
+					case 'start':
+						start_capture.apply($(this), args);
+						break;
+						
+					case 'take_photo':
+						takePhoto.apply($(this), args);
+						break;
+				}
+				
+			
+			});
+			
+		
+		})();
+
+	
+
+	</script>
+
+</body>
+
+</html>
+
+
+</html>
