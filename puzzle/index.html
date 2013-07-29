@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style type="text/css">
+
+			ul
+			{
+				float: left;
+				width:810px;
+				height: 810px;
+				padding: 0px;
+				margin: 0px;
+			}
+			ul.puzzle li
+			{
+				float:left;
+				display: block;
+				padding: 0px;
+				margin: 0px;
+				list-style: none;
+				width: 200px;
+				height: 200px;
+				border: 1px solid #FFF;
+				content: attr(index);
+				background: url(puzzleimage2.jpg) no-repeat;
+			}
+
+
+
+		</style>
+		<title>Mosaic Puzzle using JQuery Sortable | Amey Sakhadeo</title>
+		 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+         <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+         <script type="text/javascript" id="puzzle_dom">
+
+         		<ul class="puzzle">
+		        <li data-row="0" data-col="0" data-index="0"></li>
+		        <li data-row="0" data-col="1" data-index="1"></li>
+		        <li data-row="0" data-col="2" data-index="2"></li>
+		        <li data-row="0" data-col="3" data-index="3"></li>
+
+		        <li data-row="1" data-col="0" data-index="4"></li>
+		        <li data-row="1" data-col="1" data-index="5"></li>
+		        <li data-row="1" data-col="2" data-index="6"></li>
+		        <li data-row="1" data-col="3" data-index="7"></li>
+
+		        <li data-row="2" data-col="0" data-index="8"> </li>
+		        <li data-row="2" data-col="1" data-index="9"></li>
+		        <li data-row="2" data-col="2" data-index="10"></li>
+		        <li data-row="2" data-col="3" data-index="11"></li>
+
+		        <li data-row="3" data-col="0" data-index="12"></li>
+		        <li data-row="3" data-col="1" data-index="13"></li>
+		        <li data-row="3" data-col="2" data-index="14"></li>
+		        <li data-row="3" data-col="3" data-index="15"></li>
+
+		    	</ul>
+
+         </script>
+         <script src="http://underscorejs.org/underscore.js"></script>
+         <script type="text/javascript">
+
+         	var Puzzle = (function(){
+
+         		var puzzle_dom  = $('#puzzle_dom').html();
+
+	         	var Puzzle = {
+
+
+	         			init : function (elem) {
+
+	         				this.$elem = $(elem);
+	         				this.createDom();
+	         				this.shuffle();
+	         				this.start();
+	         				this.initHandlers();
+
+
+	         			},
+
+	         			createDom : function () {
+
+	         				this.$elem.html(puzzle_dom);
+
+	         				this.$elem.find('ul.puzzle li').each(function(){
+
+						    	var piece = $(this)
+						    	,	row = piece.data('row')
+						    	,	col = piece.data('col');
+						    	piece.css({'background-position': '-'+(202*col)+'px -'+(202*row)+'px '});
+						    });
+	         			},
+
+	         			shuffle : function () {
+
+							var shuffled = _.shuffle(this.$elem.find('ul.puzzle li'));
+				         	this.$elem.find('ul.puzzle').remove('li');
+				         	$.each(shuffled, function(i, elem)
+				         	{
+				         			Puzzle.$elem.find('ul.puzzle').append(elem);
+				         	});
+
+	         			},
+
+	         			start : function () {
+
+				         	this.$puzzle = this.$elem.find( ".puzzle" ).sortable();
+							this.$puzzle.disableSelection();
+	         			},
+
+	         			initHandlers : function () {
+
+	         				this.$puzzle.on('sortstop', this.checkState);
+	         				
+	         			},
+
+	         			endGame : function () {
+
+	         				alert('Congratulations!');
+	         				this.$puzzle.sortable('disable');
+	         				this.$puzzle.find('li').css({border: 'none'})
+
+	         			},
+
+	         			checkState : function () {
+
+	         				var complete = true;
+	         				$.each($(this).find('li'), function(i, elem)
+	     					{
+
+		         				var idx = $(elem).data('index');
+				         		if(i === +idx)
+				         		{
+				         			complete = complete && true;
+				         		}
+				         		else
+				         		{
+				         			complete = false;
+				         		}
+
+
+	     					});
+	     					if(complete)
+	     					{
+	     						Puzzle.endGame.call(Puzzle);
+	     					}
+
+	         			},
+
+	         			reset : function () {
+
+	         				this.$puzzle.sortable('cancel');
+	         			}
+	         		};
+
+	         		return Puzzle;
+
+	         	})();
+
+
+         		$(function(){
+
+         			Puzzle.init($('#game1'));
+
+         		});
+			
+
+         </script>
+	</head>
+	<body>
+		<div id="game1">
+
+		</div>
+	    <!--
+	    <div id="view-image">View Complete Image</div>
+	    <img src="wallpaper.jpg" id="original"/>
+		-->
+
+	</body>
+
+
+</html>
